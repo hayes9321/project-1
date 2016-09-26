@@ -1,0 +1,39 @@
+{"frames": {
+
+"pikachu.gif":
+{
+	"frame": {"x":1923,"y":50,"w":41,"h":46},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":4,"y":0,"w":41,"h":46},
+	"sourceSize": {"w":50,"h":46},
+	"pivot": {"x":0.5,"y":0.5}
+},
+"pikachua-back.gif":
+{
+	"frame": {"x":1923,"y":1,"w":36,"h":47},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":5,"y":0,"w":36,"h":47},
+	"sourceSize": {"w":41,"h":47},
+	"pivot": {"x":0.5,"y":0.5}
+},
+"space-background.jpg":
+{
+	"frame": {"x":1,"y":1,"w":1920,"h":1200},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":1920,"h":1200},
+	"sourceSize": {"w":1920,"h":1200},
+	"pivot": {"x":0.5,"y":0.5}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "sprite.png",
+	"format": "RGBA8888",
+	"size": {"w":1965,"h":1202},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:a25db10a29201ad155530299de9a4fbe:40facea0d656604e98754ae178300150:68d88b3cf7eafc9b5accfffdfb2fda91$"
+}
+}
