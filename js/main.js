@@ -1,23 +1,31 @@
-var game = new Phaser.Game(800, 600, Phaser.AUTO);
+var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game', { preload: preload, create: create, update: update});
 
-	var gameState = {
-		preload: function() { //load assets
-			this.load.image('background','assets/img/space-background.jpg');
-			// this.game.load.atlasJSONhash('pikachu', )	
-			this.load.image('pikachu', 'assets/img/pikachu.gif');	
+	function preload() { //load assets
+		game.load.image('background','assets/img/space-background.jpg');	
+		game.load.image('pikachu', 'assets/img/pikachu.gif');	
 
-		},
-		create: function(){// do something with the assest liek add it to the scene
-			this.background = this.game.add.sprite(0, 0, 'background');
-			this.pikachu = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'pikachu');
-			this.pikachu.scale.setTo(2);
-		},	
-		update: function(){//things to do on each tick
 
-		}
-	};
-	game.state.add('gameState', gameState);
-	game.state.start('gameState');
+		var playingField;
+		var player;
+	}
+	function create(){// do something with the assest liek add it to the scene
+		game.physics.startSystem(Phaser.Physics.ARCADE);
 
-	console.log("working");
+		//playing feild background image
+   		playingField = game.add.image(0, 0, 'background');
+
+   		//create pikachu character
+		player = game.add.sprite(400, 500, 'pikachu');
+    		player.anchor.setTo(0.5, 0.5);
+    		game.physics.enable(player, Phaser.Physics.ARCADE);
+
+    	 //  And some controls to play the game with
+    	cursors = game.input.keyboard.createCursorKeys();
+    	fireButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+	}
+	function update(){//things to do on each tick
+
+	}
+
+
 	
