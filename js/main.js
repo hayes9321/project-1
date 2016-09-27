@@ -3,7 +3,9 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game', { preload: preload, cr
 	function preload() { //load assets
 		game.load.image('background','assets/img/space-background.jpg');	
 		game.load.image('pikachu', 'assets/img/pikachu.gif');	
-		game.load.spritesheet('bullet', 'assets/img/lightning_1.png', 128, 512);
+		game.load.spritesheet('bullet', 'assets/img/lightning_1.png', 128 , 512);
+		game.load.image('jiggly', 'assets/img/jigglyPuff.png');
+		game.load.image('brick', 'assets/brick_tiles_1.png');
 	}
 		var playingField;
 		var player;
@@ -12,6 +14,11 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game', { preload: preload, cr
 		var bulletTime = 0;
 		var cursors;
 		var fireButton;
+		var ball;
+		var secondBall;
+		var nextFire = 0;
+		var map;
+		var layer;
 	
 	function create(){// do something with the assest liek add it to the scene
 		game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -19,22 +26,43 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game', { preload: preload, cr
 		//playing feild background image
    		playingField = game.add.image(0, 0, 'background');
 
+   	    //floor
+   	    platforms = game.add.group();
+   	    createPlatform();
+   		
+
    		//create bullet
    		//  Our bullet group
 	    bullets = game.add.group();
 	    bullets.enableBody = true;
 	    bullets.physicsBodyType = Phaser.Physics.ARCADE;
-	    bullets.createMultiple(12, 'bullet');
+	    bullets.createMultiple(10, 'bullet');
 	    bullets.setAll('anchor.x', 0.5);
-	    bullets.setAll('anchor.y',0);
+	    bullets.setAll('anchor.y', 0.5);
 	    bullets.setAll('outOfBoundsKill', true);
 	    bullets.setAll('checkWorldBounds', true);
+
 
 
    		//create pikachu character
 		player = game.add.sprite(400, 575, 'pikachu');
     	player.anchor.setTo(0.5, 0.5);
     	game.physics.enable(player, Phaser.Physics.ARCADE);
+    	player.body.collideWorldBounds = true;
+
+    	//create jiggly puff aka ball
+    	ball = game.add.sprite(400, 200, 'jiggly');
+	    game.physics.enable(ball, Phaser.Physics.ARCADE);
+	    //  This gets it moving
+	    ball.body.velocity.setTo(200, 200);
+	    //  This makes the game world bounce-able
+	    ball.body.collideWorldBounds = true;
+	    //  This sets the ball bounce energy for the horizontal  and vertical vectors (as an x,y point). "1" is 100% energy return
+	    ball.body.bounce.set(1);
+	    ball.body.gravity.y = 100;
+	    ball.body.bounce.setTo(0.9, 0.9);
+	
+
 
     	 //  And some controls to play the game with
     	cursors = game.input.keyboard.createCursorKeys();
@@ -42,7 +70,7 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game', { preload: preload, cr
 	}
 	function update(){//things to do on each tick
 		// if (player.alive){
-  //       //  Reset the player, then check for movement keys
+        //  Reset the player, then check for movement keys
         player.body.velocity.setTo(0, 0);
 
         if (cursors.left.isDown)
@@ -60,16 +88,42 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game', { preload: preload, cr
 
         //  Firing
 
-        if (fireButton.isDown)
+        if (fireButton.isDown && game.time.totalElapsedSeconds() > nextFire)
         {
             fireBullet();
+            nextFire = game.time.totalElapsedSeconds() + 0.5;
+
         }
-        
+        game.physics.arcade.overlap(bullets, ball, collisionHandler, null, this);
+        game.physics.arcade.overlap(player, ball);
 
         //collision events
         // game.physics.arcade.overlap(bullets);
-
+	
 	}
+	function collisionHandler (a, b) {
+		
+		secondBall = game.add.sprite(ball.body.x, ball.body.y, 'jiggly');
+		game.physics.arcade.enable(secondBall);
+		secondBall.body.collideWorldBounds = true;
+		secondBall.body.velocity.x = 100;
+		secondBall.body.velocity.y = -50;
+
+		secondBall2 = game.add.sprite(ball.body.x, ball.body.y, 'jiggly');
+		game.physics.arcade.enable(secondBall2);
+		secondBall2.body.collideWorldBounds = true;
+		secondBall2.body.velocity.x = -150;
+		secondBall2.body.velocity.y = -50;
+
+		// if(){
+		// 	secondBall.ball.velocity.y = 
+		// }
+
+		ball.destroy();
+		console.log("working"); 
+	
+}
+
 	function fireBullet () {
     //  set a time limit to regulate bullet speed
     	//translate it to secounds
@@ -78,6 +132,7 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game', { preload: preload, cr
 	    if (game.time.totalElapsedSeconds() > bulletTime){
 	        var bullet = bullets.getFirstExists(false);
 	     	bullet.animations.add('thunder', [0,1,2,3,4,5,6,7], 15, true); //add new name, array for the pi, framespersec, loop
+	     	//bullet.body.setSize(10,512,59,0);
 	     	console.log(bullet);
 	        
 	        if (bullet){
@@ -86,9 +141,14 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game', { preload: preload, cr
 	            bullet.reset(player.x, 600);
 	            bullet.body.velocity.y = -800;
 	            bulletTime = game.time.totalElapsedSeconds() + 1;
+
 	        }
         }
     }
+    // function createPlatform(){
+    // 	for(var i = 0; i < game.world.width; i += 34);
+    // 		var ground = platforms.create(i, game.world.height - 34, 'brick');
+    // }
 
 // function resetBullet (bullet) {
 
@@ -96,6 +156,38 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game', { preload: preload, cr
 //     bullet.kill();
 
 // }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 	
