@@ -126,6 +126,7 @@ var game = new Phaser.Game(800, 500, Phaser.AUTO, 'game', { preload: preload, cr
             nextFire = game.time.totalElapsedSeconds() + 0.5;
 
         }
+        
         //bullet hits ball collisions
         game.physics.arcade.overlap(bullets, ball, collisionHandler, null, this);
         game.physics.arcade.overlap(bullets, secondBall, secondCollision, null, this);
@@ -169,6 +170,7 @@ var game = new Phaser.Game(800, 500, Phaser.AUTO, 'game', { preload: preload, cr
     	d.kill();
 
         checkForWin();
+
         //the "click to restart" handler
         game.input.onTap.addOnce(restart,this);
     }
@@ -249,14 +251,15 @@ var game = new Phaser.Game(800, 500, Phaser.AUTO, 'game', { preload: preload, cr
         //revives the player
         player.revive();
         //hides the text
+        numberOfLives = 3;
         stateText.visible = false;
-        //numberOfLives = 3
         ball = game.add.sprite(400, 200, 'jiggly');
         game.physics.enable(ball, Phaser.Physics.ARCADE);
         ball.body.velocity.x = 100;
         ball.body.velocity.y = 100;
         ball.body.collideWorldBounds = true;
         ball.body.bounce.set(1);
+        
 
     }
     function restartLevel(){
@@ -290,13 +293,12 @@ var game = new Phaser.Game(800, 500, Phaser.AUTO, 'game', { preload: preload, cr
         }
     }
     function checkForWin(){
-        if(secondBall && secondBall2){
-            console.log("you win");
+        if(!ball.alive && !secondBall.alive && !secondBall2.alive){
+            stateText.text="YOU WIN! \n Click to restart";
+            stateText.visible = true;
         }
     }
-    // function playerBeatLevel(){
 
-    // }
 
 
 
