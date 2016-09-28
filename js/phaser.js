@@ -23,6 +23,7 @@ var game = new Phaser.Game(800, 500, Phaser.AUTO, 'game', { preload: preload, cr
 		var platforms;
 		var lives;
 		var spawnTimer = 0;
+        var numberOfLives = 3;
 	
 	function create(){// do something with the assest liek add it to the scene
 		game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -75,7 +76,8 @@ var game = new Phaser.Game(800, 500, Phaser.AUTO, 'game', { preload: preload, cr
 	    stateText.anchor.setTo(0.5, 0.5);
 	    stateText.visible = false;
 
-	    for (var i = 0; i < 3; i++) 
+        //set lives
+	    for (var i = 0; i < numberOfLives; i++) 
 	    {
 	        var lifeBar = lives.create(game.world.width - 100 + (40 * i), 60, 'pikachu');
 	        lifeBar.anchor.setTo(0.5, 0.5);
@@ -183,7 +185,11 @@ var game = new Phaser.Game(800, 500, Phaser.AUTO, 'game', { preload: preload, cr
 
     if (live)
     {
+        //takes away one life if hit and start the level again with adjust life
         live.kill();
+        restartLevel();
+        //the "click to restart" handler
+        game.input.onTap.addOnce(unpause,this);
     }
 
     // When the player dies
@@ -228,16 +234,35 @@ var game = new Phaser.Game(800, 500, Phaser.AUTO, 'game', { preload: preload, cr
     	}
     }
 
-function restart () {
-    
-    //resets the life count
-    lives.callAll('revive');
-    //revives the player
-    player.revive();
-    //hides the text
-    stateText.visible = false;
+    function restart() {
+        
+        //resets the life count
+        lives.callAll('revive');
+        //revives the player
+        player.revive();
+        //hides the text
+        stateText.visible = false;
+        //numberOfLives = 3
 
-}
+    }
+    function restartLevel(lives){
+        lives = numberOfLives - 1;
+        stateText.text=" Ouch Try Again \n Click to restart";
+        stateText.visible = true;
+        game.paused = true;
+        ball.reset(ball.x, 100);
+        ball.reset(ball.y, 75);
+        ball.body.velocity.x = 100;
+
+        
+    }
+    function unpause(){
+        game.paused = false;
+        stateText.visible = false;
+    }
+    // function playerBeatLevel(){
+
+    // }
 
 
 
