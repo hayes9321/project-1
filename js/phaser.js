@@ -7,6 +7,7 @@ var game = new Phaser.Game(800, 500, Phaser.AUTO, 'game', { preload: preload, cr
 		game.load.image('jiggly', 'assets/img/jigglyPuff.png');
 		game.load.image('brick', 'assets/brick_tiles_1.png');
 	}
+
 		var playingField;
 		var player;
 		var bullets;
@@ -19,9 +20,9 @@ var game = new Phaser.Game(800, 500, Phaser.AUTO, 'game', { preload: preload, cr
 		var secondBall2;
 		var nextFire = 0;
 		var gravityTimer = 0;
-		var map;
-		var layer;
 		var platforms;
+		var lives;
+		var spawnTimer = 0;
 	
 	function create(){// do something with the assest liek add it to the scene
 		game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -58,16 +59,28 @@ var game = new Phaser.Game(800, 500, Phaser.AUTO, 'game', { preload: preload, cr
     	//create jiggly puff aka ball
     	ball = game.add.sprite(400, 200, 'jiggly');
 	    game.physics.enable(ball, Phaser.Physics.ARCADE);
-	    //  This gets it moving
 	    ball.body.velocity.x = 100; 
 	    ball.body.velocity.y = -100;
-	    //  This makes the game world bounce-able
 	    ball.body.collideWorldBounds = true;
 	    //  This sets the ball bounce energy for the horizontal  and vertical vectors (as an x,y point). "1" is 100% energy return
 	    ball.body.bounce.set(1);
 	    ball.body.bounce.setTo(0.9, 0.9);
 	
+		//create lives bar	
+	    lives = game.add.group();
+        game.add.text(game.world.width - 100, 10, 'Lives : ', { font: '34px Arial', fill: '#fff' });
 
+            //  Text
+	    stateText = game.add.text(game.world.centerX,game.world.centerY,' ', { font: '84px Arial', fill: '#fff' });
+	    stateText.anchor.setTo(0.5, 0.5);
+	    stateText.visible = false;
+
+	    for (var i = 0; i < 3; i++) 
+	    {
+	        var lifeBar = lives.create(game.world.width - 100 + (40 * i), 60, 'pikachu');
+	        lifeBar.anchor.setTo(0.5, 0.5);
+	        lifeBar.alpha = 0.7;
+	    }
 
     	 //  And some controls to play the game with
     	cursors = game.input.keyboard.createCursorKeys();
@@ -111,22 +124,32 @@ var game = new Phaser.Game(800, 500, Phaser.AUTO, 'game', { preload: preload, cr
             nextFire = game.time.totalElapsedSeconds() + 0.5;
 
         }
+        //bullet hits ball collisions
         game.physics.arcade.overlap(bullets, ball, collisionHandler, null, this);
-        game.physics.arcade.overlap(player, ball);
+        game.physics.arcade.overlap(bullets, secondBall, secondCollision, null, this);
+        game.physics.arcade.overlap(bullets, secondBall2, secondCollision, null, this);
+
+        //ball hits player collisions
+        game.physics.arcade.overlap(player, ball, ballHitsPlayer, null, this);
+        game.physics.arcade.collide(player, ball);
+
+        //ball hits ground collisions (manually set gravity each time)
         game.physics.arcade.collide(platforms, ball, ballHitsFloor, null, this);
 		game.physics.arcade.collide(platforms, secondBall, ballHitsFloor, null, this);
 		game.physics.arcade.collide(platforms, secondBall2, ballHitsFloor, null, this);
 	}
-	function collisionHandler (a, b) {
+	function collisionHandler(a, b) {
 		
-		secondBall = game.add.sprite(ball.body.x, ball.body.y, 'jiggly');
+		var position = ball.body;
+		a.destroy();
+		secondBall = game.add.sprite(position.x + 100, position.y, 'jiggly');
 		game.physics.arcade.enable(secondBall);
 		secondBall.body.collideWorldBounds = true;
 		secondBall.body.velocity.x = 100;
 		secondBall.body.velocity.y = -50;
 		secondBall.body.bounce.set(1);
 
-		secondBall2 = game.add.sprite(ball.body.x, ball.body.y, 'jiggly');
+		secondBall2 = game.add.sprite(position.x -100, position.y, 'jiggly');
 		game.physics.arcade.enable(secondBall2);
 		secondBall2.body.collideWorldBounds = true;
 		secondBall2.body.velocity.x = -150;
@@ -134,13 +157,12 @@ var game = new Phaser.Game(800, 500, Phaser.AUTO, 'game', { preload: preload, cr
 		secondBall2.body.bounce.set(1);
 		
 
-		ball.destroy();
-		console.log("working"); 
+		b.destroy();
 	
     }
-    function finalCollision(d,e){
-    	secondBall.destroy();
-    	secondBall2.destroy();
+    function secondCollision(d,e){
+    		e.kill();
+    		d.kill();
     }
     function ballHitsFloor() {
 
@@ -154,6 +176,30 @@ var game = new Phaser.Game(800, 500, Phaser.AUTO, 'game', { preload: preload, cr
         	secondBall2.body.velocity.y = -120;
         }
     }
+    function ballHitsPlayer (playerObj, ballObj) {
+    
+
+    live = lives.getFirstAlive();
+
+    if (live)
+    {
+        live.kill();
+    }
+
+    // When the player dies
+    if (lives.countLiving() < 1)
+    {
+        playerObj.kill();
+       
+
+        stateText.text=" GAME OVER \n Click to restart";
+        stateText.visible = true;
+
+        //the "click to restart" handler
+        game.input.onTap.addOnce(restart,this);
+    }
+
+}
 	function fireBullet () {
     //  set a time limit to regulate bullet speed
     	//translate it to secounds
@@ -182,16 +228,16 @@ var game = new Phaser.Game(800, 500, Phaser.AUTO, 'game', { preload: preload, cr
     	}
     }
 
-// function resetBullet (bullet) {
+function restart () {
+    
+    //resets the life count
+    lives.callAll('revive');
+    //revives the player
+    player.revive();
+    //hides the text
+    stateText.visible = false;
 
-//     //  Called if the bullet goes out of the screen
-//     bullet.kill();
-
-// }
-
-
-
-
+}
 
 
 
