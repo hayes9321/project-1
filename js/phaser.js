@@ -133,6 +133,8 @@ var game = new Phaser.Game(800, 500, Phaser.AUTO, 'game', { preload: preload, cr
 
         //ball hits player collisions
         game.physics.arcade.overlap(player, ball, ballHitsPlayer, null, this);
+        game.physics.arcade.overlap(player, secondBall, ballHitsPlayer, null, this);
+        game.physics.arcade.overlap(player, secondBall2, ballHitsPlayer, null, this);
         game.physics.arcade.collide(player, ball);
 
         //ball hits ground collisions (manually set gravity each time)
@@ -163,8 +165,12 @@ var game = new Phaser.Game(800, 500, Phaser.AUTO, 'game', { preload: preload, cr
 	
     }
     function secondCollision(d,e){
-    		e.kill();
-    		d.kill();
+    	e.kill();
+    	d.kill();
+
+        checkForWin();
+        //the "click to restart" handler
+        game.input.onTap.addOnce(restart,this);
     }
     function ballHitsFloor() {
 
@@ -187,15 +193,17 @@ var game = new Phaser.Game(800, 500, Phaser.AUTO, 'game', { preload: preload, cr
     {
         //takes away one life if hit and start the level again with adjust life
         live.kill();
-        restartLevel();
+        killAllBalls();
         //the "click to restart" handler
         game.input.onTap.addOnce(unpause,this);
+        restartLevel();
     }
 
     // When the player dies
-    if (lives.countLiving() < 1)
+    if (numberOfLives < 1)
     {
         playerObj.kill();
+        killAllBalls();
        
 
         stateText.text=" GAME OVER \n Click to restart";
@@ -243,22 +251,48 @@ var game = new Phaser.Game(800, 500, Phaser.AUTO, 'game', { preload: preload, cr
         //hides the text
         stateText.visible = false;
         //numberOfLives = 3
+        ball = game.add.sprite(400, 200, 'jiggly');
+        game.physics.enable(ball, Phaser.Physics.ARCADE);
+        ball.body.velocity.x = 100;
+        ball.body.velocity.y = 100;
+        ball.body.collideWorldBounds = true;
+        ball.body.bounce.set(1);
 
     }
-    function restartLevel(lives){
-        lives = numberOfLives - 1;
+    function restartLevel(){
+        numberOfLives = numberOfLives - 1;
         stateText.text=" Ouch Try Again \n Click to restart";
         stateText.visible = true;
         game.paused = true;
-        ball.reset(ball.x, 100);
-        ball.reset(ball.y, 75);
+        ball = game.add.sprite(400, 200, 'jiggly');
+        game.physics.enable(ball, Phaser.Physics.ARCADE);
         ball.body.velocity.x = 100;
+        ball.body.velocity.y = 100;
+        ball.body.collideWorldBounds = true;
+        ball.body.bounce.set(1);
 
         
     }
     function unpause(){
         game.paused = false;
         stateText.visible = false;
+    }
+
+    function killAllBalls() {
+        if (ball){
+            ball.kill(); 
+        } 
+        if(secondBall){
+            secondBall.kill();
+        }
+        if(secondBall2){
+            secondBall2.kill();
+        }
+    }
+    function checkForWin(){
+        if(secondBall && secondBall2){
+            console.log("you win");
+        }
     }
     // function playerBeatLevel(){
 
