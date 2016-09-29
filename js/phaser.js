@@ -1,4 +1,4 @@
-var game = new Phaser.Game(800, 500, Phaser.AUTO, 'game', { preload: preload, create: create, update: update});
+var game = new Phaser.Game(600, 400, Phaser.AUTO, 'game', { preload: preload, create: create, update: update});
 
 	function preload() { //load assets
 		game.load.image('background','assets/img/space-background.jpg');	
@@ -52,7 +52,7 @@ var game = new Phaser.Game(800, 500, Phaser.AUTO, 'game', { preload: preload, cr
 
 
    		//create pikachu character
-		player = game.add.sprite(400, 445, 'pikachu');
+		player = game.add.sprite(400, 345, 'pikachu');
     	player.anchor.setTo(0.5, 0.5);
     	game.physics.enable(player, Phaser.Physics.ARCADE);
     	player.body.collideWorldBounds = true;
@@ -60,8 +60,8 @@ var game = new Phaser.Game(800, 500, Phaser.AUTO, 'game', { preload: preload, cr
     	//create jiggly puff aka ball
     	ball = game.add.sprite(400, 200, 'jiggly');
 	    game.physics.enable(ball, Phaser.Physics.ARCADE);
-	    ball.body.velocity.x = 100; 
-	    ball.body.velocity.y = -100;
+	    ball.body.velocity.x = 250; 
+	    ball.body.velocity.y = -60;
 	    ball.body.collideWorldBounds = true;
 	    //  This sets the ball bounce energy for the horizontal  and vertical vectors (as an x,y point). "1" is 100% energy return
 	    ball.body.bounce.set(1);
@@ -72,7 +72,7 @@ var game = new Phaser.Game(800, 500, Phaser.AUTO, 'game', { preload: preload, cr
         game.add.text(game.world.width - 100, 10, 'Lives : ', { font: '34px Arial', fill: '#fff' });
 
             //  Text
-	    stateText = game.add.text(game.world.centerX,game.world.centerY,' ', { font: '84px Arial', fill: '#fff' });
+	    stateText = game.add.text(game.world.centerX,game.world.centerY,' ', { font: '60px Arial', fill: '#fff' });
 	    stateText.anchor.setTo(0.5, 0.5);
 	    stateText.visible = false;
 
@@ -108,13 +108,13 @@ var game = new Phaser.Game(800, 500, Phaser.AUTO, 'game', { preload: preload, cr
 
         if(game.time.totalElapsedSeconds() > gravityTimer ){
         	if(ball && ball.body){
-        		ball.body.velocity.y += 10;
+        		ball.body.velocity.y += 20;
         	}
         	if(secondBall && secondBall.body){
-        		secondBall.body.velocity.y += 10;
+        		secondBall.body.velocity.y += 20;
         	}
         	if(secondBall2 && secondBall2.body){
-        		secondBall2.body.velocity.y += 10;
+        		secondBall2.body.velocity.y += 20;
         	}
         	gravityTimer = game.time.totalElapsedSeconds() + 0.2;
         }
@@ -256,7 +256,7 @@ var game = new Phaser.Game(800, 500, Phaser.AUTO, 'game', { preload: preload, cr
         ball = game.add.sprite(400, 200, 'jiggly');
         game.physics.enable(ball, Phaser.Physics.ARCADE);
         ball.body.velocity.x = 100;
-        ball.body.velocity.y = 100;
+        ball.body.velocity.y = -100;
         ball.body.collideWorldBounds = true;
         ball.body.bounce.set(1);
         
@@ -270,7 +270,7 @@ var game = new Phaser.Game(800, 500, Phaser.AUTO, 'game', { preload: preload, cr
         ball = game.add.sprite(400, 200, 'jiggly');
         game.physics.enable(ball, Phaser.Physics.ARCADE);
         ball.body.velocity.x = 100;
-        ball.body.velocity.y = 100;
+        ball.body.velocity.y = - 100;
         ball.body.collideWorldBounds = true;
         ball.body.bounce.set(1);
 
@@ -294,7 +294,7 @@ var game = new Phaser.Game(800, 500, Phaser.AUTO, 'game', { preload: preload, cr
     }
     function checkForWin(){
         if(!ball.alive && !secondBall.alive && !secondBall2.alive){
-            stateText.text="YOU WIN! \n Click to restart";
+            stateText.text=" YOU WIN! \n Click to restart";
             stateText.visible = true;
         }
     }
