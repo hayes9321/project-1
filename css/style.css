@@ -1,5 +1,5 @@
 body{
-	background-image: url("assets/img/body-img.jpg");
+	background-image: "assets/img/body-img.jpg";
 	background-position: center;
 	background-repeat: no-repeat;
 	background-color: black;
