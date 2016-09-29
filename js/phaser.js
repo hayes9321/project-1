@@ -6,7 +6,9 @@ var game = new Phaser.Game(600, 400, Phaser.AUTO, 'game', { preload: preload, cr
 		game.load.spritesheet('bullet', 'assets/img/lightning_1.png', 128 , 512);
 		game.load.image('jiggly', 'assets/img/jigglyPuff.png');
 		game.load.image('brick', 'assets/brick_tiles_1.png');
-	}
+        game.load.audio('battle', ['assets/sounds/battle-sound.mp3', 'assets/sounds/battle-sound.ogg']);
+	    game.load.audio('shoot', ['assets/sounds/shoot.mp3','assets/sounds/shoot.ogg']);
+    }
 
 		var playingField;
 		var player;
@@ -24,9 +26,17 @@ var game = new Phaser.Game(600, 400, Phaser.AUTO, 'game', { preload: preload, cr
 		var lives;
 		var spawnTimer = 0;
         var numberOfLives = 3;
+        var battleSound;
+        var shootSound;
 	
 	function create(){// do something with the assest liek add it to the scene
 		game.physics.startSystem(Phaser.Physics.ARCADE);
+
+        //sounds
+        battleSound = game.add.audio('battle');
+        battleSound.play();
+        shootSound = game.add.audio('shoot');
+
 
 		//playing feild background image
    		playingField = game.add.image(0, 0, 'background');
@@ -87,10 +97,12 @@ var game = new Phaser.Game(600, 400, Phaser.AUTO, 'game', { preload: preload, cr
     	 //  And some controls to play the game with
     	cursors = game.input.keyboard.createCursorKeys();
     	fireButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-	}
+       
+    }
+
 	function update(){//things to do on each tick
 		// if (player.alive){
-        //  Reset the player, then check for movement keys
+
         player.body.velocity.setTo(0, 0);
 
         if (cursors.left.isDown)
@@ -122,11 +134,11 @@ var game = new Phaser.Game(600, 400, Phaser.AUTO, 'game', { preload: preload, cr
 
         if (fireButton.isDown && game.time.totalElapsedSeconds() > nextFire)
         {
+            shootSound.play();
             fireBullet();
             nextFire = game.time.totalElapsedSeconds() + 0.5;
 
         }
-        
         //bullet hits ball collisions
         game.physics.arcade.overlap(bullets, ball, collisionHandler, null, this);
         game.physics.arcade.overlap(bullets, secondBall, secondCollision, null, this);
@@ -231,7 +243,7 @@ var game = new Phaser.Game(600, 400, Phaser.AUTO, 'game', { preload: preload, cr
 	            //  And fire it
 	            bullet.play('thunder');
 	            bullet.reset(player.x, 600);
-	            bullet.body.velocity.y = -800;
+	            bullet.body.velocity.y = -900;
 	            bulletTime = game.time.totalElapsedSeconds() + 1;
 
 	        }
