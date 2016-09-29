@@ -134,7 +134,6 @@ var game = new Phaser.Game(600, 400, Phaser.AUTO, 'game', { preload: preload, cr
 
         if (fireButton.isDown && game.time.totalElapsedSeconds() > nextFire)
         {
-            shootSound.play();
             fireBullet();
             nextFire = game.time.totalElapsedSeconds() + 0.5;
 
@@ -241,6 +240,7 @@ var game = new Phaser.Game(600, 400, Phaser.AUTO, 'game', { preload: preload, cr
 	        
 	        if (bullet){
 	            //  And fire it
+                shootSound.play();
 	            bullet.play('thunder');
 	            bullet.reset(player.x, 600);
 	            bullet.body.velocity.y = -900;
