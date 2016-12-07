@@ -3,10 +3,8 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "dependencies": {},
-  "devDependencies": {},
   "scripts": {
-    "start": "node_modules/browser-sync/bin/browser-sync.js start --server . --files ."
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
@@ -17,5 +15,12 @@
   "bugs": {
     "url": "https://github.com/hayes9321/project-1/issues"
   },
-  "homepage": "https://github.com/hayes9321/project-1#readme"
+  "homepage": "https://github.com/hayes9321/project-1#readme",
+  "dependencies": {
+    "express": "^4.14.0",
+    "path": "^0.12.7"
+  },
+  "production": {
+    "use_env_variable": "DATABASE_URL"
+  },
 }
