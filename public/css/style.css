@@ -1,10 +1,19 @@
+html{
+	height: 100%;
+}
 body{
 	background-image: url("../assets/img/body-img.jpg");
-	background-position: center;
-	background-repeat: no-repeat;
-	background-color: black;
+	background-size: cover;
+	background-repeat: no-repeat;	
+}
+canvas {
+	height: 400px;    
+	display : block;   
+	margin : 0 auto;
 }
 img{
+	display: block;
+	margin: 0 auto;
 	height: 150px;
 	width: 400px;
 }
@@ -13,14 +22,8 @@ p{
 	color: white;
 }
 .pokemon{
-	height: 1px;
-	padding:0 34%;
+	width: 100%;
+	height: 200px;
 }
-#container{
-	position: center;
-}
-#game{
-	position: relative;
-	padding-top: 160px;
-	padding-left: 325px;
-}
+
+
